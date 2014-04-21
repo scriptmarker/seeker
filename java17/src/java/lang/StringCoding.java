@@ -1,28 +1,3 @@
-/*
- * Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.lang;
 
 import java.io.UnsupportedEncodingException;
@@ -46,16 +21,13 @@ import sun.nio.cs.ArrayEncoder;
 /**
  * Utility class for string encoding and decoding.
  */
-
 class StringCoding {
 
     private StringCoding() { }
 
     /** The cached coders for each thread */
-    private final static ThreadLocal<SoftReference<StringDecoder>> decoder =
-        new ThreadLocal<>();
-    private final static ThreadLocal<SoftReference<StringEncoder>> encoder =
-        new ThreadLocal<>();
+    private final static ThreadLocal<SoftReference<StringDecoder>> decoder = new ThreadLocal<>();
+    private final static ThreadLocal<SoftReference<StringEncoder>> encoder = new ThreadLocal<>();
 
     private static boolean warnUnsupportedCharset = true;
 

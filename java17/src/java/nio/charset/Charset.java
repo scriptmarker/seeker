@@ -1,35 +1,9 @@
-/*
- * Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.nio.charset;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.spi.CharsetProvider;
 import java.security.AccessController;
-import java.security.AccessControlException;
 import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,219 +23,8 @@ import sun.security.action.GetPropertyAction;
 
 
 /**
- * A named mapping between sequences of sixteen-bit Unicode <a
- * href="../../lang/Character.html#unicode">code units</a> and sequences of
- * bytes.  This class defines methods for creating decoders and encoders and
- * for retrieving the various names associated with a charset.  Instances of
- * this class are immutable.
- *
- * <p> This class also defines static methods for testing whether a particular
- * charset is supported, for locating charset instances by name, and for
- * constructing a map that contains every charset for which support is
- * available in the current Java virtual machine.  Support for new charsets can
- * be added via the service-provider interface defined in the {@link
- * java.nio.charset.spi.CharsetProvider} class.
- *
- * <p> All of the methods defined in this class are safe for use by multiple
- * concurrent threads.
- *
- *
- * <a name="names"><a name="charenc">
- * <h4>Charset names</h4>
- *
- * <p> Charsets are named by strings composed of the following characters:
- *
- * <ul>
- *
- *   <li> The uppercase letters <tt>'A'</tt> through <tt>'Z'</tt>
- *        (<tt>'&#92;u0041'</tt>&nbsp;through&nbsp;<tt>'&#92;u005a'</tt>),
- *
- *   <li> The lowercase letters <tt>'a'</tt> through <tt>'z'</tt>
- *        (<tt>'&#92;u0061'</tt>&nbsp;through&nbsp;<tt>'&#92;u007a'</tt>),
- *
- *   <li> The digits <tt>'0'</tt> through <tt>'9'</tt>
- *        (<tt>'&#92;u0030'</tt>&nbsp;through&nbsp;<tt>'&#92;u0039'</tt>),
- *
- *   <li> The dash character <tt>'-'</tt>
- *        (<tt>'&#92;u002d'</tt>,&nbsp;<small>HYPHEN-MINUS</small>),
- *
- *   <li> The plus character <tt>'+'</tt>
- *        (<tt>'&#92;u002b'</tt>,&nbsp;<small>PLUS SIGN</small>),
- *
- *   <li> The period character <tt>'.'</tt>
- *        (<tt>'&#92;u002e'</tt>,&nbsp;<small>FULL STOP</small>),
- *
- *   <li> The colon character <tt>':'</tt>
- *        (<tt>'&#92;u003a'</tt>,&nbsp;<small>COLON</small>), and
- *
- *   <li> The underscore character <tt>'_'</tt>
- *        (<tt>'&#92;u005f'</tt>,&nbsp;<small>LOW&nbsp;LINE</small>).
- *
- * </ul>
- *
- * A charset name must begin with either a letter or a digit.  The empty string
- * is not a legal charset name.  Charset names are not case-sensitive; that is,
- * case is always ignored when comparing charset names.  Charset names
- * generally follow the conventions documented in <a
- * href="http://www.ietf.org/rfc/rfc2278.txt"><i>RFC&nbsp;2278:&nbsp;IANA Charset
- * Registration Procedures</i></a>.
- *
- * <p> Every charset has a <i>canonical name</i> and may also have one or more
- * <i>aliases</i>.  The canonical name is returned by the {@link #name() name} method
- * of this class.  Canonical names are, by convention, usually in upper case.
- * The aliases of a charset are returned by the {@link #aliases() aliases}
- * method.
- *
- * <a name="hn">
- *
- * <p> Some charsets have an <i>historical name</i> that is defined for
- * compatibility with previous versions of the Java platform.  A charset's
- * historical name is either its canonical name or one of its aliases.  The
- * historical name is returned by the <tt>getEncoding()</tt> methods of the
- * {@link java.io.InputStreamReader#getEncoding InputStreamReader} and {@link
- * java.io.OutputStreamWriter#getEncoding OutputStreamWriter} classes.
- *
- * <a name="iana">
- *
- * <p> If a charset listed in the <a
- * href="http://www.iana.org/assignments/character-sets"><i>IANA Charset
- * Registry</i></a> is supported by an implementation of the Java platform then
- * its canonical name must be the name listed in the registry.  Many charsets
- * are given more than one name in the registry, in which case the registry
- * identifies one of the names as <i>MIME-preferred</i>.  If a charset has more
- * than one registry name then its canonical name must be the MIME-preferred
- * name and the other names in the registry must be valid aliases.  If a
- * supported charset is not listed in the IANA registry then its canonical name
- * must begin with one of the strings <tt>"X-"</tt> or <tt>"x-"</tt>.
- *
- * <p> The IANA charset registry does change over time, and so the canonical
- * name and the aliases of a particular charset may also change over time.  To
- * ensure compatibility it is recommended that no alias ever be removed from a
- * charset, and that if the canonical name of a charset is changed then its
- * previous canonical name be made into an alias.
- *
- *
- * <h4>Standard charsets</h4>
- *
- * <a name="standard">
- *
- * <p> Every implementation of the Java platform is required to support the
- * following standard charsets.  Consult the release documentation for your
- * implementation to see if any other charsets are supported.  The behavior
- * of such optional charsets may differ between implementations.
- *
- * <blockquote><table width="80%" summary="Description of standard charsets">
- * <tr><th><p align="left">Charset</p></th><th><p align="left">Description</p></th></tr>
- * <tr><td valign=top><tt>US-ASCII</tt></td>
- *     <td>Seven-bit ASCII, a.k.a. <tt>ISO646-US</tt>,
- *         a.k.a. the Basic Latin block of the Unicode character set</td></tr>
- * <tr><td valign=top><tt>ISO-8859-1&nbsp;&nbsp;</tt></td>
- *     <td>ISO Latin Alphabet No. 1, a.k.a. <tt>ISO-LATIN-1</tt></td></tr>
- * <tr><td valign=top><tt>UTF-8</tt></td>
- *     <td>Eight-bit UCS Transformation Format</td></tr>
- * <tr><td valign=top><tt>UTF-16BE</tt></td>
- *     <td>Sixteen-bit UCS Transformation Format,
- *         big-endian byte&nbsp;order</td></tr>
- * <tr><td valign=top><tt>UTF-16LE</tt></td>
- *     <td>Sixteen-bit UCS Transformation Format,
- *         little-endian byte&nbsp;order</td></tr>
- * <tr><td valign=top><tt>UTF-16</tt></td>
- *     <td>Sixteen-bit UCS Transformation Format,
- *         byte&nbsp;order identified by an optional byte-order mark</td></tr>
- * </table></blockquote>
- *
- * <p> The <tt>UTF-8</tt> charset is specified by <a
- * href="http://www.ietf.org/rfc/rfc2279.txt"><i>RFC&nbsp;2279</i></a>; the
- * transformation format upon which it is based is specified in
- * Amendment&nbsp;2 of ISO&nbsp;10646-1 and is also described in the <a
- * href="http://www.unicode.org/unicode/standard/standard.html"><i>Unicode
- * Standard</i></a>.
- *
- * <p> The <tt>UTF-16</tt> charsets are specified by <a
- * href="http://www.ietf.org/rfc/rfc2781.txt"><i>RFC&nbsp;2781</i></a>; the
- * transformation formats upon which they are based are specified in
- * Amendment&nbsp;1 of ISO&nbsp;10646-1 and are also described in the <a
- * href="http://www.unicode.org/unicode/standard/standard.html"><i>Unicode
- * Standard</i></a>.
- *
- * <p> The <tt>UTF-16</tt> charsets use sixteen-bit quantities and are
- * therefore sensitive to byte order.  In these encodings the byte order of a
- * stream may be indicated by an initial <i>byte-order mark</i> represented by
- * the Unicode character <tt>'&#92;uFEFF'</tt>.  Byte-order marks are handled
- * as follows:
- *
- * <ul>
- *
- *   <li><p> When decoding, the <tt>UTF-16BE</tt> and <tt>UTF-16LE</tt>
- *   charsets interpret the initial byte-order marks as a <small>ZERO-WIDTH
- *   NON-BREAKING SPACE</small>; when encoding, they do not write
- *   byte-order marks. </p></li>
-
- *
- *   <li><p> When decoding, the <tt>UTF-16</tt> charset interprets the
- *   byte-order mark at the beginning of the input stream to indicate the
- *   byte-order of the stream but defaults to big-endian if there is no
- *   byte-order mark; when encoding, it uses big-endian byte order and writes
- *   a big-endian byte-order mark. </p></li>
- *
- * </ul>
- *
- * In any case, byte order marks occuring after the first element of an
- * input sequence are not omitted since the same code is used to represent
- * <small>ZERO-WIDTH NON-BREAKING SPACE</small>.
- *
- * <p> Every instance of the Java virtual machine has a default charset, which
- * may or may not be one of the standard charsets.  The default charset is
- * determined during virtual-machine startup and typically depends upon the
- * locale and charset being used by the underlying operating system. </p>
- *
- * <p>The {@link StandardCharsets} class defines constants for each of the
- * standard charsets.
- *
- * <h4>Terminology</h4>
- *
- * <p> The name of this class is taken from the terms used in
- * <a href="http://www.ietf.org/rfc/rfc2278.txt"><i>RFC&nbsp;2278</i></a>.
- * In that document a <i>charset</i> is defined as the combination of
- * one or more coded character sets and a character-encoding scheme.
- * (This definition is confusing; some other software systems define
- * <i>charset</i> as a synonym for <i>coded character set</i>.)
- *
- * <p> A <i>coded character set</i> is a mapping between a set of abstract
- * characters and a set of integers.  US-ASCII, ISO&nbsp;8859-1,
- * JIS&nbsp;X&nbsp;0201, and Unicode are examples of coded character sets.
- *
- * <p> Some standards have defined a <i>character set</i> to be simply a
- * set of abstract characters without an associated assigned numbering.
- * An alphabet is an example of such a character set.  However, the subtle
- * distinction between <i>character set</i> and <i>coded character set</i>
- * is rarely used in practice; the former has become a short form for the
- * latter, including in the Java API specification.
- *
- * <p> A <i>character-encoding scheme</i> is a mapping between one or more
- * coded character sets and a set of octet (eight-bit byte) sequences.
- * UTF-8, UTF-16, ISO&nbsp;2022, and EUC are examples of
- * character-encoding schemes.  Encoding schemes are often associated with
- * a particular coded character set; UTF-8, for example, is used only to
- * encode Unicode.  Some schemes, however, are associated with multiple
- * coded character sets; EUC, for example, can be used to encode
- * characters in a variety of Asian coded character sets.
- *
- * <p> When a coded character set is used exclusively with a single
- * character-encoding scheme then the corresponding charset is usually
- * named for the coded character set; otherwise a charset is usually named
- * for the encoding scheme and, possibly, the locale of the coded
- * character sets that it supports.  Hence <tt>US-ASCII</tt> is both the
- * name of a coded character set and of the charset that encodes it, while
- * <tt>EUC-JP</tt> is the name of the charset that encodes the
- * JIS&nbsp;X&nbsp;0201, JIS&nbsp;X&nbsp;0208, and JIS&nbsp;X&nbsp;0212
- * coded character sets for the Japanese language.
- *
- * <p> The native character encoding of the Java programming language is
- * UTF-16.  A charset in the Java platform therefore defines a mapping
- * between sequences of sixteen-bit UTF-16 code units (that is, sequences
- * of chars) and sequences of bytes. </p>
- *
+ * 16 位的 Unicode 代码单元序列和字节序列之间的指定映射关系。
+ * 此类定义了用于创建解码器和编码器以及获取与 charset 关联的各种名称的方法。
  *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
@@ -273,12 +36,11 @@ import sun.security.action.GetPropertyAction;
  * @see java.lang.Character
  */
 
-public abstract class Charset
-    implements Comparable<Charset>
-{
+public abstract class Charset implements Comparable<Charset> {
 
-    /* -- Static methods -- */
-
+    /**
+     * 用volatile修饰的变量，线程在每次使用变量的时候，都会读取变量修改后的最的值
+     */
     private static volatile String bugLevel = null;
 
     static boolean atBugLevel(String bl) {              // package-private
