@@ -1,48 +1,13 @@
-/*
- * Copyright (c) 1994, 2006, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.lang;
 
 /**
- * The Boolean class wraps a value of the primitive type
- * {@code boolean} in an object. An object of type
- * {@code Boolean} contains a single field whose type is
- * {@code boolean}.
- * <p>
- * In addition, this class provides many methods for
- * converting a {@code boolean} to a {@code String} and a
- * {@code String} to a {@code boolean}, as well as other
- * constants and methods useful when dealing with a
- * {@code boolean}.
+ * The Boolean class wraps a value of the primitive type {@code boolean} in an object. 
+ * An object of type {@code Boolean} contains a single field whose type is {@code boolean}.
  *
  * @author  Arthur van Hoff
  * @since   JDK1.0
  */
-public final class Boolean implements java.io.Serializable,
-                                      Comparable<Boolean>
-{
+public final class Boolean implements java.io.Serializable, Comparable<Boolean> {
     /**
      * The {@code Boolean} object corresponding to the primitive
      * value {@code true}.
@@ -76,11 +41,6 @@ public final class Boolean implements java.io.Serializable,
      * Allocates a {@code Boolean} object representing the
      * {@code value} argument.
      *
-     * <p><b>Note: It is rarely appropriate to use this constructor.
-     * Unless a <i>new</i> instance is required, the static factory
-     * {@link #valueOf(boolean)} is generally a better choice. It is
-     * likely to yield significantly better space and time performance.</b>
-     *
      * @param   value   the value of the {@code Boolean}.
      */
     public Boolean(boolean value) {
@@ -91,12 +51,6 @@ public final class Boolean implements java.io.Serializable,
      * Allocates a {@code Boolean} object representing the value
      * {@code true} if the string argument is not {@code null}
      * and is equal, ignoring case, to the string {@code "true"}.
-     * Otherwise, allocate a {@code Boolean} object representing the
-     * value {@code false}. Examples:<p>
-     * {@code new Boolean("True")} produces a {@code Boolean} object
-     * that represents {@code true}.<br>
-     * {@code new Boolean("yes")} produces a {@code Boolean} object
-     * that represents {@code false}.
      *
      * @param   s   the string to be converted to a {@code Boolean}.
      */
@@ -109,11 +63,8 @@ public final class Boolean implements java.io.Serializable,
      * returned represents the value {@code true} if the string argument
      * is not {@code null} and is equal, ignoring case, to the string
      * {@code "true"}. <p>
-     * Example: {@code Boolean.parseBoolean("True")} returns {@code true}.<br>
-     * Example: {@code Boolean.parseBoolean("yes")} returns {@code false}.
      *
-     * @param      s   the {@code String} containing the boolean
-     *                 representation to be parsed
+     * @param      s   the {@code String} containing the boolean representation to be parsed
      * @return     the boolean represented by the string argument
      * @since 1.5
      */
@@ -122,8 +73,7 @@ public final class Boolean implements java.io.Serializable,
     }
 
     /**
-     * Returns the value of this {@code Boolean} object as a boolean
-     * primitive.
+     * Returns the value of this {@code Boolean} object as a boolean primitive.
      *
      * @return  the primitive {@code boolean} value of this object.
      */
@@ -216,16 +166,7 @@ public final class Boolean implements java.io.Serializable,
     }
 
     /**
-     * Returns {@code true} if and only if the system property
-     * named by the argument exists and is equal to the string
-     * {@code "true"}. (Beginning with version 1.0.2 of the
-     * Java<small><sup>TM</sup></small> platform, the test of
-     * this string is case insensitive.) A system property is accessible
-     * through {@code getProperty}, a method defined by the
-     * {@code System} class.
-     * <p>
-     * If there is no property with the specified name, or if the specified
-     * name is empty or null, then {@code false} is returned.
+     * 当且仅当以参数命名的系统属性存在，且等于 "true" 字符串时，才返回 true
      *
      * @param   name   the system property name.
      * @return  the {@code boolean} value of the system property.
