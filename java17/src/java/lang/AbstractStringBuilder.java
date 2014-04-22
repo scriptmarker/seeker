@@ -1,28 +1,3 @@
-/*
- * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.lang;
 
 import sun.misc.FloatingDecimal;
@@ -119,7 +94,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * size check or synchronization.
      */
     void expandCapacity(int minimumCapacity) {
-        int newCapacity = value.length * 2 + 2;
+        int newCapacity = value.length * 2 + 2;//最小容量增加为原容量的2倍加2
         if (newCapacity - minimumCapacity < 0)
             newCapacity = minimumCapacity;
         if (newCapacity < 0) {
@@ -146,23 +121,6 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
     /**
      * Sets the length of the character sequence.
      * The sequence is changed to a new character sequence
-     * whose length is specified by the argument. For every nonnegative
-     * index <i>k</i> less than <code>newLength</code>, the character at
-     * index <i>k</i> in the new character sequence is the same as the
-     * character at index <i>k</i> in the old sequence if <i>k</i> is less
-     * than the length of the old character sequence; otherwise, it is the
-     * null character <code>'&#92;u0000'</code>.
-     *
-     * In other words, if the <code>newLength</code> argument is less than
-     * the current length, the length is changed to the specified length.
-     * <p>
-     * If the <code>newLength</code> argument is greater than or equal
-     * to the current length, sufficient null characters
-     * (<code>'&#92;u0000'</code>) are appended so that
-     * length becomes the <code>newLength</code> argument.
-     * <p>
-     * The <code>newLength</code> argument must be greater than or equal
-     * to <code>0</code>.
      *
      * @param      newLength   the new length
      * @throws     IndexOutOfBoundsException  if the
@@ -183,15 +141,6 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
     /**
      * Returns the <code>char</code> value in this sequence at the specified index.
-     * The first <code>char</code> value is at index <code>0</code>, the next at index
-     * <code>1</code>, and so on, as in array indexing.
-     * <p>
-     * The index argument must be greater than or equal to
-     * <code>0</code>, and less than the length of this sequence.
-     *
-     * <p>If the <code>char</code> value specified by the index is a
-     * <a href="Character.html#unicode">surrogate</a>, the surrogate
-     * value is returned.
      *
      * @param      index   the index of the desired <code>char</code> value.
      * @return     the <code>char</code> value at the specified index.
@@ -317,15 +266,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
     /**
      * Characters are copied from this sequence into the
-     * destination character array <code>dst</code>. The first character to
-     * be copied is at index <code>srcBegin</code>; the last character to
-     * be copied is at index <code>srcEnd-1</code>. The total number of
-     * characters to be copied is <code>srcEnd-srcBegin</code>. The
-     * characters are copied into the subarray of <code>dst</code> starting
-     * at index <code>dstBegin</code> and ending at index:
-     * <p><blockquote><pre>
-     * dstbegin + (srcEnd-srcBegin) - 1
-     * </pre></blockquote>
+     * destination character array <code>dst</code>. 
      *
      * @param      srcBegin   start copying at this offset.
      * @param      srcEnd     stop copying at this offset.
@@ -333,20 +274,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @param      dstBegin   offset into <code>dst</code>.
      * @throws     NullPointerException if <code>dst</code> is
      *             <code>null</code>.
-     * @throws     IndexOutOfBoundsException  if any of the following is true:
-     *             <ul>
-     *             <li><code>srcBegin</code> is negative
-     *             <li><code>dstBegin</code> is negative
-     *             <li>the <code>srcBegin</code> argument is greater than
-     *             the <code>srcEnd</code> argument.
-     *             <li><code>srcEnd</code> is greater than
-     *             <code>this.length()</code>.
-     *             <li><code>dstBegin+srcEnd-srcBegin</code> is greater than
-     *             <code>dst.length</code>
-     *             </ul>
+     * @throws     IndexOutOfBoundsException
      */
-    public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
-    {
+    public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
         if (srcBegin < 0)
             throw new StringIndexOutOfBoundsException(srcBegin);
         if ((srcEnd < 0) || (srcEnd > count))
@@ -357,13 +287,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
     }
 
     /**
-     * The character at the specified index is set to <code>ch</code>. This
-     * sequence is altered to represent a new character sequence that is
-     * identical to the old character sequence, except that it contains the
-     * character <code>ch</code> at position <code>index</code>.
-     * <p>
-     * The index argument must be greater than or equal to
-     * <code>0</code>, and less than the length of this sequence.
+     * The character at the specified index is set to <code>ch</code>.
      *
      * @param      index   the index of the character to modify.
      * @param      ch      the new character.
@@ -378,11 +302,6 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
     /**
      * Appends the string representation of the {@code Object} argument.
-     * <p>
-     * The overall effect is exactly as if the argument were converted
-     * to a string by the method {@link String#valueOf(Object)},
-     * and the characters of that string were then
-     * {@link #append(String) appended} to this character sequence.
      *
      * @param   obj   an {@code Object}.
      * @return  a reference to this object.
@@ -393,18 +312,6 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
     /**
      * Appends the specified string to this character sequence.
-     * <p>
-     * The characters of the {@code String} argument are appended, in
-     * order, increasing the length of this sequence by the length of the
-     * argument. If {@code str} is {@code null}, then the four
-     * characters {@code "null"} are appended.
-     * <p>
-     * Let <i>n</i> be the length of this character sequence just prior to
-     * execution of the {@code append} method. Then the character at
-     * index <i>k</i> in the new character sequence is equal to the character
-     * at index <i>k</i> in the old character sequence, if <i>k</i> is less
-     * than <i>n</i>; otherwise, it is equal to the character at index
-     * <i>k-n</i> in the argument {@code str}.
      *
      * @param   str   a string.
      * @return  a reference to this object.
